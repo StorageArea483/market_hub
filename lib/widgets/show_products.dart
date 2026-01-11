@@ -104,16 +104,7 @@ class _ProductCard extends StatelessWidget {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => InternetConnection(
-              child: ProductDetailScreen(
-                thumbnail: product.thumbnail,
-                title: product.title,
-                price: product.price,
-                discountPercentage: product.discountPercentage,
-                rating: product.rating,
-                reviews: product.reviews,
-                description: product.description,
-                category: product.category,
-              ),
+              child: ProductDetailScreen(product: product),
             ),
           ),
         );

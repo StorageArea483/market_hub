@@ -5,31 +5,16 @@ import 'package:market_hub/pages/landing_page.dart';
 import 'package:market_hub/providers/providers.dart';
 import 'package:market_hub/styles/style.dart';
 import 'package:market_hub/widgets/show_products.dart';
+import 'package:market_hub/pages/cart_details.dart';
 
 class ProductDetailScreen extends StatelessWidget {
-  final String thumbnail;
-  final String title;
-  final double price;
-  final double discountPercentage;
-  final double rating;
-  final List<Review> reviews;
-  final String description;
-  final String category;
-  const ProductDetailScreen({
-    super.key,
-    required this.thumbnail,
-    required this.title,
-    required this.price,
-    required this.discountPercentage,
-    required this.rating,
-    required this.reviews,
-    required this.description,
-    required this.category,
-  });
+  final PostModel product;
+  const ProductDetailScreen({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
-    final discountedPrice = price - (price * discountPercentage / 100);
+    final discountedPrice =
+        product.price - (product.price * product.discountPercentage / 100);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -54,7 +39,7 @@ class ProductDetailScreen extends StatelessWidget {
                   children: [
                     // Image Section
                     Image.network(
-                      thumbnail,
+                      product.thumbnail,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return const Icon(
@@ -77,7 +62,7 @@ class ProductDetailScreen extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: Text(
-                                  title,
+                                  product.title,
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -96,7 +81,7 @@ class ProductDetailScreen extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    '\$${price.toStringAsFixed(2)}',
+                                    '\$${product.price.toStringAsFixed(2)}',
                                     style: const TextStyle(
                                       fontSize: 12,
                                       decoration: TextDecoration.lineThrough,
@@ -115,7 +100,7 @@ class ProductDetailScreen extends StatelessWidget {
                               ...List.generate(5, (index) {
                                 // add stars according to the rating
                                 return Icon(
-                                  index < rating.floor()
+                                  index < product.rating.floor()
                                       ? Icons.star
                                       : Icons.star_border,
                                   color: Colors.amber,
@@ -124,14 +109,14 @@ class ProductDetailScreen extends StatelessWidget {
                               }),
                               const SizedBox(width: 8),
                               Text(
-                                '$rating',
+                                '${product.rating}',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                '(${reviews.length} reviews)',
+                                '(${product.reviews.length} reviews)',
                                 style: const TextStyle(
                                   color: Colors.grey,
                                   fontSize: 12,
@@ -150,7 +135,7 @@ class ProductDetailScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            description,
+                            product.description,
                             style: const TextStyle(
                               color: Colors.grey,
                               height: 1.5,
@@ -177,7 +162,7 @@ class ProductDetailScreen extends StatelessWidget {
                               Column(
                                 children: [
                                   Text(
-                                    rating.toStringAsFixed(1),
+                                    product.rating.toStringAsFixed(1),
                                     style: const TextStyle(
                                       fontSize: 36,
                                       fontWeight: FontWeight.bold,
@@ -186,7 +171,7 @@ class ProductDetailScreen extends StatelessWidget {
                                   Row(
                                     children: List.generate(5, (index) {
                                       return Icon(
-                                        index < rating.floor()
+                                        index < product.rating.floor()
                                             ? Icons.star
                                             : Icons.star_border,
                                         color: Colors.amber,
@@ -196,7 +181,7 @@ class ProductDetailScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    '${reviews.length} ratings',
+                                    '${product.reviews.length} ratings',
                                     style: const TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey,
@@ -221,7 +206,7 @@ class ProductDetailScreen extends StatelessWidget {
                           const SizedBox(height: 30),
 
                           // Review List
-                          ...reviews.map((review) {
+                          ...product.reviews.map((review) {
                             // extracting the widgets
                             return _buildReviewItem(review);
                           }),
@@ -236,7 +221,7 @@ class ProductDetailScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          ShowProducts(category: category),
+                          ShowProducts(category: product.category),
                         ],
                       ),
                     ),
@@ -313,7 +298,13 @@ class ProductDetailScreen extends StatelessWidget {
                   // Add to Cart Button
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => CartDetails(product: product),
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         foregroundColor: Colors.black,
@@ -336,7 +327,7 @@ class ProductDetailScreen extends StatelessWidget {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            '| \$${(price - (price * discountPercentage / 100)).toStringAsFixed(2)}',
+                            '| \$${(product.price - (product.price * product.discountPercentage / 100)).toStringAsFixed(2)}',
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
