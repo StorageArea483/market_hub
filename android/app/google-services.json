@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "491896404486",
+    "project_id": "market-hub-users",
+    "storage_bucket": "market-hub-users.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:491896404486:android:7b1543edb0ebf6bcc72187",
+        "android_client_info": {
+          "package_name": "com.example.market_hub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCd40JM9kjMGccjlbSGxneDPG2W2RJiPXY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
