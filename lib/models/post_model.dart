@@ -7,11 +7,7 @@ class PostModel {
   final double discountPercentage;
   final double rating;
   final int stock;
-  final List<String> tags;
-  final String brand;
-  final String sku;
   final int weight;
-  final Dimensions dimensions;
   final String warrantyInformation;
   final String shippingInformation;
   final String availabilityStatus;
@@ -19,7 +15,6 @@ class PostModel {
   final String returnPolicy;
   final int minimumOrderQuantity;
   final Meta meta;
-  final List<String> images;
   final String thumbnail;
 
   const PostModel({
@@ -31,11 +26,7 @@ class PostModel {
     required this.discountPercentage,
     required this.rating,
     required this.stock,
-    required this.tags,
-    required this.brand,
-    required this.sku,
     required this.weight,
-    required this.dimensions,
     required this.warrantyInformation,
     required this.shippingInformation,
     required this.availabilityStatus,
@@ -43,7 +34,6 @@ class PostModel {
     required this.returnPolicy,
     required this.minimumOrderQuantity,
     required this.meta,
-    required this.images,
     required this.thumbnail,
   });
 
@@ -57,11 +47,7 @@ class PostModel {
       discountPercentage: (json['discountPercentage'] as num).toDouble(),
       rating: (json['rating'] as num).toDouble(),
       stock: json['stock'],
-      tags: List<String>.from(json['tags']),
-      brand: json['brand'] ?? '',
-      sku: json['sku'],
       weight: json['weight'],
-      dimensions: Dimensions.fromJson(json['dimensions']),
       warrantyInformation: json['warrantyInformation'],
       shippingInformation: json['shippingInformation'],
       availabilityStatus: json['availabilityStatus'],
@@ -71,7 +57,6 @@ class PostModel {
       returnPolicy: json['returnPolicy'],
       minimumOrderQuantity: json['minimumOrderQuantity'],
       meta: Meta.fromJson(json['meta']),
-      images: List<String>.from(json['images']),
       thumbnail: json['thumbnail'],
     );
   }
