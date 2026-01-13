@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:market_hub/pages/card_details.dart';
 import 'package:market_hub/styles/style.dart';
 import 'package:market_hub/providers/providers.dart';
 import 'package:market_hub/models/categories.dart';
@@ -223,6 +224,13 @@ class _LandingPageState extends State<LandingPage> {
             label: 'Profile',
           ),
         ],
+        onTap: (index) {
+          /*if (index == 2) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const CartDetails()),
+            );
+          }*/
+        },
       ),
     );
   }

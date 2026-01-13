@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:market_hub/models/cart_info_model.dart';
+import 'package:market_hub/models/cart_data.dart';
 import 'package:market_hub/models/categories.dart';
 import 'package:market_hub/models/post_model.dart';
 import 'package:http/http.dart' as http;
@@ -61,13 +61,11 @@ class ProductCartCountNotifier extends StateNotifier<int> {
   }
 }
 
-// Provider to load cart IDs and Quantities from Firebase
-final loadCartDataProvider = FutureProvider<Map<String, List<dynamic>>>((
-  ref,
-) async {
+// Provider to load cart IDs and quantities from Firebase and showing carts
+final loadCartIdsProvider = FutureProvider<Map<String, List<int>>>((ref) async {
   final user = FirebaseAuth.instance.currentUser;
   if (user == null) {
-    return {'id': [], 'quantity': []};
+    return {'ids': [], 'quantities': []};
   }
 
   final doc = await FirebaseFirestore.instance
@@ -76,28 +74,28 @@ final loadCartDataProvider = FutureProvider<Map<String, List<dynamic>>>((
       .get();
 
   if (!doc.exists) {
-    return {'id': [], 'quantity': []};
+    return {'ids': [], 'quantities': []};
   }
 
   final data = doc.data();
   return {
-    'id': List<int>.from(data?['id'] ?? []),
-    'quantity': List<int>.from(data?['quantity'] ?? []),
+    'ids': List<int>.from(data?['ids'] ?? []),
+    'quantities': List<int>.from(data?['quantities'] ?? []),
   };
 });
 
 // this loading state is useful when adding data or removing the data from firestore database
 final loadingCartItemsProvider = StateProvider<bool>((_) => false);
 
-final cartProvider = StateNotifierProvider<CartNotifier, List<CartInfoModel>>(
+final cartProvider = StateNotifierProvider<CartNotifier, CartData>(
   (ref) => CartNotifier(),
 );
 
 // Provider to add carts in Firebase
-class CartNotifier extends StateNotifier<List<CartInfoModel>> {
-  CartNotifier() : super([]);
+class CartNotifier extends StateNotifier<CartData> {
+  CartNotifier() : super(CartData(ids: [], quantities: []));
 
-  // Add product ids and quantity to firebase
+  // Add product id and quantity to firebase
   Future<bool> addData(int productId, int quantity) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return false;
@@ -112,20 +110,25 @@ class CartNotifier extends StateNotifier<List<CartInfoModel>> {
       List<int> quantities = [];
 
       if (doc.exists) {
-        ids = List<int>.from(doc.data()?['id'] ?? []);
-        quantities = List<int>.from(doc.data()?['quantity'] ?? []);
+        ids = List<int>.from(doc.data()?['ids'] ?? []);
+        quantities = List<int>.from(doc.data()?['quantities'] ?? []);
       }
 
-      // Add or update the product
-      if (!ids.contains(productId)) {
+      // Check if product already exists in cart
+      final existingIndex = ids.indexOf(productId);
+      if (existingIndex != -1) {
+        // Update quantity if product already exists
+        quantities[existingIndex] = quantity;
+      } else {
+        // Add new product with its quantity
         ids.add(productId);
         quantities.add(quantity);
-      } else {
-        int index = ids.indexOf(productId);
-        quantities[index] = quantity;
       }
 
-      await docRef.set({'id': ids, 'quantity': quantities});
+      await docRef.set({'ids': ids, 'quantities': quantities});
+
+      // Update local state
+      state = CartData(ids: ids, quantities: quantities);
       return true;
     } catch (e) {
       // Handle error
@@ -133,8 +136,8 @@ class CartNotifier extends StateNotifier<List<CartInfoModel>> {
     }
   }
 
-  // Remove product from cart
-  Future<bool> removeData(int productId) async {
+  // Update quantity for a specific product
+  Future<bool> updateQuantity(int productId, int newQuantity) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return false;
 
@@ -146,20 +149,55 @@ class CartNotifier extends StateNotifier<List<CartInfoModel>> {
       final doc = await docRef.get();
 
       if (doc.exists) {
-        List<int> ids = List<int>.from(doc.data()?['id'] ?? []);
-        List<int> quantities = List<int>.from(doc.data()?['quantity'] ?? []);
+        List<int> ids = List<int>.from(doc.data()?['ids'] ?? []);
+        List<int> quantities = List<int>.from(doc.data()?['quantities'] ?? []);
 
-        int index = ids.indexOf(productId);
+        final index = ids.indexOf(productId);
         if (index != -1) {
-          ids.removeAt(index);
-          quantities.removeAt(index);
-          await docRef.set({'id': ids, 'quantity': quantities});
+          quantities[index] = newQuantity;
+          await docRef.set({'ids': ids, 'quantities': quantities});
+
+          // Update local state
+          state = CartData(ids: ids, quantities: quantities);
+          return true;
         }
       }
-      return true;
+      return false;
     } catch (e) {
       // Handle error
       return false;
+    }
+  }
+
+  // Remove product from cart
+  Future<void> removeData(int productId) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    try {
+      final docRef = FirebaseFirestore.instance
+          .collection('cart_items')
+          .doc(user.uid);
+
+      final doc = await docRef.get();
+
+      if (doc.exists) {
+        List<int> ids = List<int>.from(doc.data()?['ids'] ?? []);
+        List<int> quantities = List<int>.from(doc.data()?['quantities'] ?? []);
+
+        final index = ids.indexOf(productId);
+        if (index != -1) {
+          ids.removeAt(index);
+          quantities.removeAt(index);
+
+          await docRef.set({'ids': ids, 'quantities': quantities});
+
+          // Update local state
+          state = CartData(ids: ids, quantities: quantities);
+        }
+      }
+    } catch (e) {
+      // Handle error
     }
   }
 }

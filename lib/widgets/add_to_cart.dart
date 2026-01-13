@@ -15,34 +15,37 @@ class EditCartItems extends ConsumerWidget {
         final quantity = ref.read(productCartCountProvider);
         ref.read(loadingCartItemsProvider.notifier).state = true;
 
+        // Use product.id instead of product object
         bool result = await ref
             .read(cartProvider.notifier)
             .addData(product.id, quantity);
 
         if (result) {
           ref.read(loadingCartItemsProvider.notifier).state = false;
-          // ignore: use_build_context_synchronously
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Product added to cart',
-                style: TextStyle(color: Colors.white),
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Product added to cart',
+                  style: TextStyle(color: Colors.white),
+                ),
+                backgroundColor: AppColors.primaryGreen,
               ),
-              backgroundColor: AppColors.primaryGreen,
-            ),
-          );
+            );
+          }
         } else {
           ref.read(loadingCartItemsProvider.notifier).state = false;
-          // ignore: use_build_context_synchronously
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Failed to add product to cart',
-                style: TextStyle(color: Colors.white),
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Failed to add product to cart',
+                  style: TextStyle(color: Colors.white),
+                ),
+                backgroundColor: Colors.red,
               ),
-              backgroundColor: Colors.red,
-            ),
-          );
+            );
+          }
         }
       },
       style: ElevatedButton.styleFrom(
@@ -59,9 +62,12 @@ class EditCartItems extends ConsumerWidget {
           Consumer(
             builder: (context, ref, _) {
               return ref.watch(loadingCartItemsProvider)
-                  ? const Center(
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
                       child: CircularProgressIndicator(
-                        color: AppColors.primaryGreen,
+                        color: Colors.white,
+                        strokeWidth: 2,
                       ),
                     )
                   : const Text(
