@@ -65,7 +65,9 @@ class ProductCartCountNotifier extends StateNotifier<int> {
 // Provider to load cart products from Firebase by matching IDs with postProvider
 final loadCartIdsProvider = FutureProvider<CartProductsData>((ref) async {
   // Watch postProvider to get all products
-  final postsAsyncValue = await ref.watch(postProvider.future);
+  final postsAsyncValue = await ref.watch(
+    postProvider.future,
+  ); // extracted the PostModel Json
 
   final user = FirebaseAuth.instance.currentUser;
   if (user == null) {
@@ -89,17 +91,19 @@ final loadCartIdsProvider = FutureProvider<CartProductsData>((ref) async {
   final List<PostModel> cartProducts = [];
   final List<int> matchedQuantities = [];
 
+  // cartIds = [1], cartQuantities = [3]
+
   for (int i = 0; i < cartIds.length; i++) {
     final productId = cartIds[i];
     final matchingProduct = postsAsyncValue.firstWhere(
-      (product) => product.id == productId,
+      (product) => product.id == productId, //1
       orElse: () => PostModel.empty(),
     );
 
     // Only add if product was found (not empty)
     if (matchingProduct.id != 0) {
       cartProducts.add(matchingProduct);
-      matchedQuantities.add(i < cartQuantities.length ? cartQuantities[i] : 1);
+      matchedQuantities.add(cartQuantities[i]);
     }
   }
 
