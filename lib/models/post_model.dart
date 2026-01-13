@@ -60,6 +60,29 @@ class PostModel {
       thumbnail: json['thumbnail'],
     );
   }
+
+  // Empty constructor for fallback cases
+  factory PostModel.empty() {
+    return PostModel(
+      id: 0,
+      title: '',
+      description: '',
+      category: '',
+      price: 0.0,
+      discountPercentage: 0.0,
+      rating: 0.0,
+      stock: 0,
+      weight: 0,
+      warrantyInformation: '',
+      shippingInformation: '',
+      availabilityStatus: '',
+      reviews: [],
+      returnPolicy: '',
+      minimumOrderQuantity: 0,
+      meta: Meta(createdAt: '', updatedAt: ''),
+      thumbnail: '',
+    );
+  }
 }
 
 class Review {

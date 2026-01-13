@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:market_hub/models/cart_data.dart';
+import 'package:market_hub/models/cart_products_data.dart';
 import 'package:market_hub/models/categories.dart';
 import 'package:market_hub/models/post_model.dart';
 import 'package:http/http.dart' as http;
@@ -61,11 +62,14 @@ class ProductCartCountNotifier extends StateNotifier<int> {
   }
 }
 
-// Provider to load cart IDs and quantities from Firebase and showing carts
-final loadCartIdsProvider = FutureProvider<Map<String, List<int>>>((ref) async {
+// Provider to load cart products from Firebase by matching IDs with postProvider
+final loadCartIdsProvider = FutureProvider<CartProductsData>((ref) async {
+  // Watch postProvider to get all products
+  final postsAsyncValue = await ref.watch(postProvider.future);
+
   final user = FirebaseAuth.instance.currentUser;
   if (user == null) {
-    return {'ids': [], 'quantities': []};
+    return CartProductsData(products: [], quantities: []);
   }
 
   final doc = await FirebaseFirestore.instance
@@ -74,14 +78,35 @@ final loadCartIdsProvider = FutureProvider<Map<String, List<int>>>((ref) async {
       .get();
 
   if (!doc.exists) {
-    return {'ids': [], 'quantities': []};
+    return CartProductsData(products: [], quantities: []);
   }
 
   final data = doc.data();
-  return {
-    'ids': List<int>.from(data?['ids'] ?? []),
-    'quantities': List<int>.from(data?['quantities'] ?? []),
-  };
+  final List<int> cartIds = List<int>.from(data?['ids'] ?? []);
+  final List<int> cartQuantities = List<int>.from(data?['quantities'] ?? []);
+
+  // Filter products that match cart IDs and maintain order
+  final List<PostModel> cartProducts = [];
+  final List<int> matchedQuantities = [];
+
+  for (int i = 0; i < cartIds.length; i++) {
+    final productId = cartIds[i];
+    final matchingProduct = postsAsyncValue.firstWhere(
+      (product) => product.id == productId,
+      orElse: () => PostModel.empty(),
+    );
+
+    // Only add if product was found (not empty)
+    if (matchingProduct.id != 0) {
+      cartProducts.add(matchingProduct);
+      matchedQuantities.add(i < cartQuantities.length ? cartQuantities[i] : 1);
+    }
+  }
+
+  return CartProductsData(
+    products: cartProducts,
+    quantities: matchedQuantities,
+  );
 });
 
 // this loading state is useful when adding data or removing the data from firestore database
