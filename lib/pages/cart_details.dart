@@ -281,7 +281,7 @@ class CartDetails extends StatelessWidget {
 
                     return Container(
                       padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(color: Colors.white),
+                      decoration: const BoxDecoration(color: Colors.white),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -383,7 +383,7 @@ class CartDetails extends StatelessWidget {
       onTap: () async => await onTap(),
       child: Container(
         padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppColors.primaryGreen,
           shape: BoxShape.circle,
         ),

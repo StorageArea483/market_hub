@@ -94,7 +94,7 @@ class _LandingPageState extends State<LandingPage> {
                     // Greeting
                     Text(
                       'Good Morning, $userName',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
@@ -159,10 +159,10 @@ class _LandingPageState extends State<LandingPage> {
                     const SaleItems(),
 
                     // Categories Section
-                    Row(
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
+                        Text(
                           'Categories',
                           style: TextStyle(
                             fontSize: 20,
@@ -234,7 +234,7 @@ class _LandingPageState extends State<LandingPage> {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (context) =>
-                    InternetConnection(child: const CartDetails()),
+                    const InternetConnection(child: CartDetails()),
               ),
             );
           }

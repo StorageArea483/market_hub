@@ -143,10 +143,10 @@ class ProductDetailScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 24),
                           // Reviews Section
-                          Row(
+                          const Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
+                              Text(
                                 'Reviews',
                                 style: TextStyle(
                                   fontSize: 16,
