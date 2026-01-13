@@ -199,9 +199,9 @@ class CartNotifier extends StateNotifier<CartData> {
   }
 
   // Remove product from cart
-  Future<void> removeData(int productId) async {
+  Future<bool> removeData(int productId) async {
     final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
+    if (user == null) return false;
 
     try {
       final docRef = FirebaseFirestore.instance
@@ -223,10 +223,13 @@ class CartNotifier extends StateNotifier<CartData> {
 
           // Update local state
           state = CartData(ids: ids, quantities: quantities);
+          return true;
         }
       }
+      return false;
     } catch (e) {
       // Handle error
+      return false;
     }
   }
 }

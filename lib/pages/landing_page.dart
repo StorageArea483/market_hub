@@ -6,6 +6,7 @@ import 'package:market_hub/pages/cart_details.dart';
 import 'package:market_hub/styles/style.dart';
 import 'package:market_hub/providers/providers.dart';
 import 'package:market_hub/models/categories.dart';
+import 'package:market_hub/widgets/internet_connection.dart';
 import 'package:market_hub/widgets/sale_items.dart';
 import 'package:market_hub/widgets/show_products.dart';
 
@@ -65,7 +66,7 @@ class _LandingPageState extends State<LandingPage> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.background,
         elevation: 0,
         actions: [
           Padding(
@@ -225,11 +226,14 @@ class _LandingPageState extends State<LandingPage> {
           ),
         ],
         onTap: (index) {
-          /*if (index == 2) {
+          if (index == 2) {
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const CartDetails()),
+              MaterialPageRoute(
+                builder: (context) =>
+                    InternetConnection(child: const CartDetails()),
+              ),
             );
-          }*/
+          }
         },
       ),
     );
