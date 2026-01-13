@@ -20,6 +20,7 @@ class AddToCart extends ConsumerWidget {
               .addData(product.id, quantity);
 
           if (result) {
+            ref.invalidate(loadCartIdsProvider);
             ref.read(loadingCartItemsProvider.notifier).state = false;
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
