@@ -78,127 +78,131 @@ class _LandingPageState extends State<LandingPage> {
           ),
         ],
       ),
-      body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: AppColors.primaryGreen),
-            )
-          : SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 16.0,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Greeting
-                  Text(
-                    'Good Morning, $userName',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Ready to find something special?',
-                    style: AppTextStyles.subtitle,
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Search Bar
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.search, color: Colors.grey),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Consumer(
-                            builder: (context, ref, _) {
-                              // reads data if state changes
-                              return TextField(
-                                onChanged: (value) {
-                                  ref.read(searchQueryProvider.notifier).state =
-                                      value;
-                                },
-                                decoration: const InputDecoration(
-                                  hintText: 'Search for fresh finds...',
-                                  border: InputBorder.none,
-                                  hintStyle: TextStyle(color: Colors.grey),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryGreen,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(
-                            Icons.tune,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Banner Section (Placeholder)
-                  const SaleItems(),
-
-                  // Categories Section
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Categories',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
-                        ),
+      body: SafeArea(
+        child: isLoading
+            ? const Center(
+                child: CircularProgressIndicator(color: AppColors.primaryGreen),
+              )
+            : SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 16.0,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Greeting
+                    Text(
+                      'Good Morning, $userName',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Ready to find something special?',
+                      style: AppTextStyles.subtitle,
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Search Bar
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.search, color: Colors.grey),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Consumer(
+                              builder: (context, ref, _) {
+                                // reads data if state changes
+                                return TextField(
+                                  onChanged: (value) {
+                                    ref
+                                            .read(searchQueryProvider.notifier)
+                                            .state =
+                                        value;
+                                  },
+                                  decoration: const InputDecoration(
+                                    hintText: 'Search for fresh finds...',
+                                    border: InputBorder.none,
+                                    hintStyle: TextStyle(color: Colors.grey),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryGreen,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.tune,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Banner Section (Placeholder)
+                    const SaleItems(),
+
+                    // Categories Section
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildCategoryItem(Icons.grid_view, 'All'),
-                        _buildCategoryItem(Icons.brush, 'Beauty'),
-                        _buildCategoryItem(Icons.local_florist, 'Fragrances'),
-                        _buildCategoryItem(Icons.weekend, 'Furniture'),
+                        const Text(
+                          'Categories',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Featured Products Section
-                  const Text(
-                    'Featured Products',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                    const SizedBox(height: 16),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _buildCategoryItem(Icons.grid_view, 'All'),
+                          _buildCategoryItem(Icons.brush, 'Beauty'),
+                          _buildCategoryItem(Icons.local_florist, 'Fragrances'),
+                          _buildCategoryItem(Icons.weekend, 'Furniture'),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  // Product Grid (Placeholder)
-                  const ShowProducts(category: ''),
-                  const SizedBox(height: 20),
-                ],
+                    const SizedBox(height: 24),
+
+                    // Featured Products Section
+                    const Text(
+                      'Featured Products',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Product Grid (Placeholder)
+                    const ShowProducts(category: ''),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
-            ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: AppColors.white,
