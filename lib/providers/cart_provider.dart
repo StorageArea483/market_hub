@@ -1,117 +1,11 @@
-import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:market_hub/models/cart_data.dart';
 import 'package:market_hub/models/cart_products_data.dart';
-import 'package:market_hub/models/categories.dart';
 import 'package:market_hub/models/post_model.dart';
-import 'package:http/http.dart' as http;
-
-final isLoadingProvider = StateProvider.autoDispose<bool>((ref) => false);
-
-final internetProvider = StreamProvider<List<ConnectivityResult>>(
-  (_) => Connectivity().onConnectivityChanged,
-);
-
-final categoryProvider = StateNotifierProvider<CategoryNotifier, Category>(
-  (ref) => CategoryNotifier(),
-);
-
-final searchQueryProvider = StateProvider<String>((ref) => '');
-
-final postProvider = FutureProvider<List<PostModel>>((ref) async {
-  final response = await http.get(Uri.parse('https://dummyjson.com/products'));
-  if (response.statusCode == 200) {
-    final data = jsonDecode(response.body);
-    final List<PostModel> posts = (data['products'] as List)
-        .map((post) => PostModel.fromJson(post))
-        .toList();
-    return posts;
-  } else {
-    throw Exception('Failed to load products');
-  }
-});
-
-class CategoryNotifier extends StateNotifier<Category> {
-  CategoryNotifier() : super(Category(name: 'All', isSelected: true));
-
-  void selectCategory(Category category) {
-    state = category;
-  }
-}
-
-final productCartCountProvider =
-    StateNotifierProvider<ProductCartCountNotifier, int>(
-      (ref) => ProductCartCountNotifier(),
-    );
-
-class ProductCartCountNotifier extends StateNotifier<int> {
-  ProductCartCountNotifier() : super(1);
-
-  void increment() {
-    state = state + 1;
-  }
-
-  void decrement() {
-    if (state > 1) {
-      state = state - 1;
-    }
-  }
-}
-
-// Provider to load cart products from Firebase by matching IDs with postProvider
-final loadCartIdsProvider = FutureProvider<CartProductsData>((ref) async {
-  // Watch postProvider to get all products
-  final postsAsyncValue = await ref.watch(
-    postProvider.future,
-  ); // extracted the PostModel Json
-
-  final user = FirebaseAuth.instance.currentUser;
-  if (user == null) {
-    return CartProductsData(products: [], quantities: []);
-  }
-
-  final doc = await FirebaseFirestore.instance
-      .collection('cart_items')
-      .doc(user.uid)
-      .get();
-
-  if (!doc.exists) {
-    return CartProductsData(products: [], quantities: []);
-  }
-
-  final data = doc.data();
-  final List<int> cartIds = List<int>.from(data?['ids'] ?? []);
-  final List<int> cartQuantities = List<int>.from(data?['quantities'] ?? []);
-
-  // Filter products that match cart IDs and maintain order
-  final List<PostModel> cartProducts = [];
-  final List<int> matchedQuantities = [];
-
-  // cartIds = [1], cartQuantities = [3]
-
-  for (int i = 0; i < cartIds.length; i++) {
-    final productId = cartIds[i];
-    final matchingProduct = postsAsyncValue.firstWhere(
-      (product) => product.id == productId, //1
-      orElse: () => PostModel.empty(),
-    );
-
-    // Only add if product was found (not empty)
-    if (matchingProduct.id != 0) {
-      cartProducts.add(matchingProduct);
-      matchedQuantities.add(cartQuantities[i]);
-    }
-  }
-
-  return CartProductsData(
-    products: cartProducts,
-    quantities: matchedQuantities,
-  );
-});
+import 'package:market_hub/providers/product_provider.dart';
 
 final cartProvider = StateNotifierProvider<CartNotifier, CartData>(
   (ref) => CartNotifier(),
@@ -229,8 +123,73 @@ class CartNotifier extends StateNotifier<CartData> {
       return false;
     }
   }
-
-  // Remove the nested provider
 }
 
-final selectedPriceProvider = StateProvider<double?>((ref) => null);
+final loadCartIdsProvider = FutureProvider<CartProductsData>((ref) async {
+  // Watch postProvider to get all products
+  final postsAsyncValue = await ref.watch(
+    postProvider.future,
+  ); // extracted the PostModel Json
+
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) {
+    return CartProductsData(products: [], quantities: []);
+  }
+
+  final doc = await FirebaseFirestore.instance
+      .collection('cart_items')
+      .doc(user.uid)
+      .get();
+
+  if (!doc.exists) {
+    return CartProductsData(products: [], quantities: []);
+  }
+
+  final data = doc.data();
+  final List<int> cartIds = List<int>.from(data?['ids'] ?? []);
+  final List<int> cartQuantities = List<int>.from(data?['quantities'] ?? []);
+
+  // Filter products that match cart IDs and maintain order
+  final List<PostModel> cartProducts = [];
+  final List<int> matchedQuantities = [];
+
+  // cartIds = [1], cartQuantities = [3]
+
+  for (int i = 0; i < cartIds.length; i++) {
+    final productId = cartIds[i];
+    final matchingProduct = postsAsyncValue.firstWhere(
+      (product) => product.id == productId, //1
+      orElse: () => PostModel.empty(),
+    );
+
+    // Only add if product was found (not empty)
+    if (matchingProduct.id != 0) {
+      cartProducts.add(matchingProduct);
+      matchedQuantities.add(cartQuantities[i]);
+    }
+  }
+
+  return CartProductsData(
+    products: cartProducts,
+    quantities: matchedQuantities,
+  );
+});
+
+final productCartCountProvider =
+    StateNotifierProvider<ProductCartCountNotifier, int>(
+      (ref) => ProductCartCountNotifier(),
+    );
+
+class ProductCartCountNotifier extends StateNotifier<int> {
+  ProductCartCountNotifier() : super(1);
+
+  void increment() {
+    state = state + 1;
+  }
+
+  void decrement() {
+    if (state > 1) {
+      state = state - 1;
+    }
+  }
+}

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:market_hub/models/post_model.dart';
-import 'package:market_hub/providers/providers.dart';
+import 'package:market_hub/providers/cart_provider.dart';
+import 'package:market_hub/providers/cart_ui_provider.dart';
 import 'package:market_hub/styles/style.dart';
 
 class AddToCart extends ConsumerWidget {

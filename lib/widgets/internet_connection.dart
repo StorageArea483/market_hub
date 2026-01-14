@@ -1,7 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:market_hub/providers/providers.dart';
+import 'package:market_hub/providers/internet_provider.dart';
 import 'package:market_hub/styles/style.dart';
 
 class InternetConnection extends ConsumerWidget {

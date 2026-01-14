@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:market_hub/pages/landing_page.dart';
-import 'package:market_hub/providers/providers.dart';
+import 'package:market_hub/providers/cart_provider.dart';
 import 'package:market_hub/styles/style.dart';
 import 'package:market_hub/widgets/bottom_nav_bar.dart';
 
