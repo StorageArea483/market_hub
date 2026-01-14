@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:market_hub/pages/landing_page.dart';
 import 'package:market_hub/providers/providers.dart';
 import 'package:market_hub/styles/style.dart';
+import 'package:market_hub/widgets/bottom_nav_bar.dart';
 
 class CartDetails extends StatelessWidget {
   const CartDetails({super.key});
@@ -13,7 +14,6 @@ class CartDetails extends StatelessWidget {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
-        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => Navigator.of(context).pushReplacement(
@@ -355,6 +355,7 @@ class CartDetails extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: const BottomNavBar(currentIndex: 2),
     );
   }
 

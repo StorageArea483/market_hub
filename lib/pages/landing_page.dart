@@ -2,11 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:market_hub/pages/cart_details.dart';
 import 'package:market_hub/styles/style.dart';
 import 'package:market_hub/providers/providers.dart';
 import 'package:market_hub/models/categories.dart';
-import 'package:market_hub/widgets/internet_connection.dart';
+import 'package:market_hub/widgets/bottom_nav_bar.dart';
 import 'package:market_hub/widgets/sale_items.dart';
 import 'package:market_hub/widgets/show_products.dart';
 
@@ -71,9 +70,62 @@ class _LandingPageState extends State<LandingPage> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 20.0),
-            child: IconButton(
-              icon: const Icon(Icons.shopping_cart, color: Colors.black),
-              onPressed: () {},
+            child: Consumer(
+              builder: (context, ref, child) {
+                return ref
+                    .watch(loadCartIdsProvider)
+                    .when(
+                      data: (data) {
+                        if (data.products.isNotEmpty) {
+                          return Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              const Icon(
+                                Icons.shopping_cart,
+                                color: Colors.black,
+                                size: 28,
+                              ),
+                              // Badge
+                              Positioned(
+                                right: 0,
+                                top: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.green,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 18,
+                                    minHeight: 18,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      '${data.products.length}', // cart item count
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        } else {
+                          return const Icon(
+                            Icons.shopping_cart,
+                            color: Colors.black,
+                          );
+                        }
+                      },
+                      loading: () =>
+                          const Icon(Icons.shopping_cart, color: Colors.black),
+                      error: (error, stackTrace) =>
+                          const Icon(Icons.shopping_cart, color: Colors.black),
+                    );
+              },
             ),
           ),
         ],
@@ -203,43 +255,7 @@ class _LandingPageState extends State<LandingPage> {
                 ),
               ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: AppColors.white,
-        selectedItemColor: AppColors.primaryGreen,
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.explore_outlined),
-            label: 'Discover',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart_outlined),
-            label: 'Cart',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_border),
-            label: 'Saved',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profile',
-          ),
-        ],
-        onTap: (index) {
-          if (index == 2) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) =>
-                    const InternetConnection(child: CartDetails()),
-              ),
-            );
-          }
-        },
-      ),
+      bottomNavigationBar: const BottomNavBar(currentIndex: 0),
     );
   }
 

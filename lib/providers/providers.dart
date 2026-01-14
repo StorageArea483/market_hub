@@ -10,7 +10,7 @@ import 'package:market_hub/models/categories.dart';
 import 'package:market_hub/models/post_model.dart';
 import 'package:http/http.dart' as http;
 
-final isSigningInProvider = StateProvider<bool>((ref) => false);
+final isLoadingProvider = StateProvider.autoDispose<bool>((ref) => false);
 
 final internetProvider = StreamProvider<List<ConnectivityResult>>(
   (_) => Connectivity().onConnectivityChanged,
@@ -112,9 +112,6 @@ final loadCartIdsProvider = FutureProvider<CartProductsData>((ref) async {
     quantities: matchedQuantities,
   );
 });
-
-// this loading state is useful when adding data or removing the data from firestore database
-final loadingCartItemsProvider = StateProvider<bool>((_) => false);
 
 final cartProvider = StateNotifierProvider<CartNotifier, CartData>(
   (ref) => CartNotifier(),

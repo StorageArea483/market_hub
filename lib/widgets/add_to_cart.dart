@@ -14,14 +14,14 @@ class AddToCart extends ConsumerWidget {
       child: ElevatedButton(
         onPressed: () async {
           final quantity = ref.read(productCartCountProvider);
-          ref.read(loadingCartItemsProvider.notifier).state = true;
+          ref.read(isLoadingProvider.notifier).state = true;
           bool result = await ref
               .read(cartProvider.notifier)
               .addData(product.id, quantity);
 
           if (result) {
             ref.invalidate(loadCartIdsProvider);
-            ref.read(loadingCartItemsProvider.notifier).state = false;
+            ref.read(isLoadingProvider.notifier).state = false;
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -34,7 +34,7 @@ class AddToCart extends ConsumerWidget {
               );
             }
           } else {
-            ref.read(loadingCartItemsProvider.notifier).state = false;
+            ref.read(isLoadingProvider.notifier).state = false;
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -63,7 +63,7 @@ class AddToCart extends ConsumerWidget {
             const SizedBox(width: 8),
             Consumer(
               builder: (context, ref, _) {
-                return ref.watch(loadingCartItemsProvider)
+                return ref.watch(isLoadingProvider)
                     ? const SizedBox(
                         height: 20,
                         width: 20,

@@ -11,17 +11,15 @@ class GoogleAuthentication extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isSigningIn = ref.watch(isSigningInProvider);
-
     return ElevatedButton(
-      onPressed: isSigningIn ? null : () => _handleGoogleSignIn(context, ref),
+      onPressed: () => _handleGoogleSignIn(context, ref),
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.white,
         foregroundColor: AppColors.textPrimary,
         elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      child: isSigningIn
+      child: ref.watch(isLoadingProvider.notifier).state
           ? const SizedBox(
               height: 24,
               width: 24,
@@ -40,7 +38,7 @@ class GoogleAuthentication extends ConsumerWidget {
 
   Future<void> _handleGoogleSignIn(BuildContext context, WidgetRef ref) async {
     // Set loading to true
-    ref.read(isSigningInProvider.notifier).state = true;
+    ref.read(isLoadingProvider.notifier).state = true;
 
     try {
       final userCredential = await GoogleSignInService.signInWithGoogle();
@@ -66,7 +64,7 @@ class GoogleAuthentication extends ConsumerWidget {
       }
     } finally {
       // Set loading to false
-      ref.read(isSigningInProvider.notifier).state = false;
+      ref.read(isLoadingProvider.notifier).state = false;
     }
   }
 }
