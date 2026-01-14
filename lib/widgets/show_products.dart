@@ -148,13 +148,15 @@ class _ProductCard extends ConsumerWidget {
                         final favIds = ref.watch(favProvider);
                         final isFav = favIds.contains(product.id);
                         return InkWell(
-                          onTap: () {
-                            ref.read(favProvider.notifier).addFav(product.id);
+                          onTap: () async {
+                            await ref
+                                .read(favProvider.notifier)
+                                .addFav(product.id);
+                            ref.invalidate(loadFavCartProducts);
                           },
                           child: Container(
                             padding: const EdgeInsets.all(6),
                             decoration: const BoxDecoration(
-                              color: AppColors.white,
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
