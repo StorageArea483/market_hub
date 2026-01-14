@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:market_hub/pages/cart_details.dart';
+import 'package:market_hub/pages/fav_cart_products.dart';
 import 'package:market_hub/pages/landing_page.dart';
 import 'package:market_hub/styles/style.dart';
 import 'package:market_hub/widgets/internet_connection.dart';
@@ -48,6 +49,13 @@ class BottomNavBar extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) =>
                   const InternetConnection(child: CartDetails()),
+            ),
+          );
+        } else if (index == 2) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) =>
+                  const InternetConnection(child: FavCartProducts()),
             ),
           );
         }

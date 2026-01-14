@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:market_hub/models/post_model.dart';
 import 'package:market_hub/pages/product_detail_screen.dart';
 import 'package:market_hub/providers/category_provider.dart';
+import 'package:market_hub/providers/fav_provider.dart';
 import 'package:market_hub/providers/product_provider.dart';
 import 'package:market_hub/styles/style.dart';
 import 'package:market_hub/widgets/internet_connection.dart';
@@ -90,13 +91,13 @@ class ShowProducts extends ConsumerWidget {
   }
 }
 
-class _ProductCard extends StatelessWidget {
+class _ProductCard extends ConsumerWidget {
   final PostModel product;
 
   const _ProductCard({required this.product});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushReplacement(
@@ -116,26 +117,59 @@ class _ProductCard extends StatelessWidget {
         child: Column(
           children: [
             Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: AppColors.background,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    product.thumbnail,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(
-                        Icons.image_not_supported_outlined,
-                        color: AppColors.textSecondary,
-                        size: 32,
-                      );
-                    },
+              child: Stack(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: AppColors.background,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(
+                        product.thumbnail,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(
+                            Icons.image_not_supported_outlined,
+                            color: AppColors.textSecondary,
+                            size: 32,
+                          );
+                        },
+                      ),
+                    ),
                   ),
-                ),
+                  Positioned(
+                    top: 5,
+                    right: 5,
+                    child: Consumer(
+                      builder: (context, ref, _) {
+                        final favIds = ref.watch(favProvider);
+                        final isFav = favIds.contains(product.id);
+                        return InkWell(
+                          onTap: () {
+                            ref.read(favProvider.notifier).addFav(product.id);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: const BoxDecoration(
+                              color: AppColors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              isFav ? Icons.favorite : Icons.favorite_border,
+                              size: 20,
+                              color: isFav
+                                  ? Colors.red
+                                  : AppColors.primaryGreen,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 12),

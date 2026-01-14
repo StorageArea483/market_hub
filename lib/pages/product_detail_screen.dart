@@ -5,6 +5,7 @@ import 'package:market_hub/pages/landing_page.dart';
 import 'package:market_hub/providers/cart_provider.dart';
 import 'package:market_hub/styles/style.dart';
 import 'package:market_hub/widgets/add_to_cart.dart';
+import 'package:market_hub/widgets/internet_connection.dart';
 import 'package:market_hub/widgets/show_products.dart';
 
 class ProductDetailScreen extends StatelessWidget {
@@ -24,7 +25,10 @@ class ProductDetailScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const LandingPage()),
+              MaterialPageRoute(
+                builder: (context) =>
+                    const InternetConnection(child: LandingPage()),
+              ),
             );
           },
         ),

@@ -45,7 +45,10 @@ class CartNotifier extends StateNotifier<CartData> {
         quantities.add(quantity);
       }
 
-      await docRef.set({'ids': ids, 'quantities': quantities});
+      await docRef.set({
+        'ids': ids,
+        'quantities': quantities,
+      }, SetOptions(merge: true));
 
       // Update local state
       state = CartData(ids: ids, quantities: quantities);
@@ -75,7 +78,10 @@ class CartNotifier extends StateNotifier<CartData> {
         final index = ids.indexOf(productId);
         if (index != -1) {
           quantities[index] = newQuantity;
-          await docRef.set({'ids': ids, 'quantities': quantities});
+          await docRef.set({
+            'ids': ids,
+            'quantities': quantities,
+          }, SetOptions(merge: true));
 
           // Update local state
           state = CartData(ids: ids, quantities: quantities);
@@ -110,7 +116,10 @@ class CartNotifier extends StateNotifier<CartData> {
           ids.removeAt(index);
           quantities.removeAt(index);
 
-          await docRef.set({'ids': ids, 'quantities': quantities});
+          await docRef.set({
+            'ids': ids,
+            'quantities': quantities,
+          }, SetOptions(merge: true));
 
           // Update local state
           state = CartData(ids: ids, quantities: quantities);

@@ -4,6 +4,7 @@ import 'package:market_hub/pages/landing_page.dart';
 import 'package:market_hub/providers/cart_provider.dart';
 import 'package:market_hub/styles/style.dart';
 import 'package:market_hub/widgets/bottom_nav_bar.dart';
+import 'package:market_hub/widgets/internet_connection.dart';
 
 class CartDetails extends StatelessWidget {
   const CartDetails({super.key});
@@ -17,7 +18,10 @@ class CartDetails extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const LandingPage()),
+            MaterialPageRoute(
+              builder: (context) =>
+                  const InternetConnection(child: LandingPage()),
+            ),
           ),
         ),
         title: const Text(
@@ -30,11 +34,11 @@ class CartDetails extends StatelessWidget {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Cart Items List
-            Expanded(
-              child: Consumer(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Cart Items List
+              Consumer(
                 builder: (context, ref, child) {
                   final cartAsync = ref.watch(loadCartIdsProvider);
                   return cartAsync.when(
@@ -42,26 +46,31 @@ class CartDetails extends StatelessWidget {
                     skipLoadingOnReload: false,
                     data: (cartData) {
                       if (cartData.products.isEmpty) {
-                        return const Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.shopping_cart_outlined,
-                                size: 100,
-                                color: AppColors.textPrimary,
-                              ),
-                              SizedBox(height: 16),
-                              Text(
-                                'Your cart is empty',
-                                style: AppTextStyles.subtitle,
-                              ),
-                            ],
+                        return SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.6,
+                          child: const Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.shopping_cart_outlined,
+                                  size: 100,
+                                  color: AppColors.textPrimary,
+                                ),
+                                SizedBox(height: 16),
+                                Text(
+                                  'Your cart is empty',
+                                  style: AppTextStyles.subtitle,
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       }
 
                       return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         itemCount: cartData.products.length,
                         itemBuilder: (context, index) {
@@ -261,101 +270,101 @@ class CartDetails extends StatelessWidget {
                   );
                 },
               ),
-            ),
 
-            // Summary Section
-            Consumer(
-              builder: (context, ref, child) {
-                final cartAsync = ref.watch(loadCartIdsProvider);
+              // Summary Section
+              Consumer(
+                builder: (context, ref, child) {
+                  final cartAsync = ref.watch(loadCartIdsProvider);
 
-                return cartAsync.when(
-                  data: (cartData) {
-                    double subtotal = 0;
-                    for (int i = 0; i < cartData.products.length; i++) {
-                      subtotal +=
-                          cartData.products[i].price * cartData.quantities[i];
-                    }
-                    const double delivery = 2.00;
-                    const double discount = 0.00;
-                    final double total = subtotal + delivery - discount;
+                  return cartAsync.when(
+                    data: (cartData) {
+                      double subtotal = 0;
+                      for (int i = 0; i < cartData.products.length; i++) {
+                        subtotal +=
+                            cartData.products[i].price * cartData.quantities[i];
+                      }
+                      const double delivery = 2.00;
+                      const double discount = 0.00;
+                      final double total = subtotal + delivery - discount;
 
-                    return Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: const BoxDecoration(color: Colors.white),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _buildSummaryRow('Subtotal', subtotal),
-                          const SizedBox(height: 12),
-                          _buildSummaryRow('Delivery', delivery),
-                          const SizedBox(height: 12),
-                          _buildSummaryRow('Discount', discount),
-                          const Divider(height: 32),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'Total',
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                      return Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: const BoxDecoration(color: Colors.white),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _buildSummaryRow('Subtotal', subtotal),
+                            const SizedBox(height: 12),
+                            _buildSummaryRow('Delivery', delivery),
+                            const SizedBox(height: 12),
+                            _buildSummaryRow('Discount', discount),
+                            const Divider(height: 32),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'Total',
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.textPrimary,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                '\$${total.toStringAsFixed(2)}',
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                                Text(
+                                  '\$${total.toStringAsFixed(2)}',
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.textPrimary,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 24),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 60,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                // Checkout logic
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                foregroundColor: Colors.black,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
+                              ],
+                            ),
+                            const SizedBox(height: 24),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 60,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  // Checkout logic
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green,
+                                  foregroundColor: Colors.black,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
                                 ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                              ),
-                              child: const Text(
-                                'Proceed to Checkout',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                child: const Text(
+                                  'Proceed to Checkout',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                        ],
-                      ),
-                    );
-                  },
-                  loading: () => const CircularProgressIndicator(
-                    color: AppColors.primaryGreen,
-                  ),
-                  error: (_, __) => const SizedBox.shrink(),
-                );
-              },
-            ),
-          ],
+                            const SizedBox(height: 8),
+                          ],
+                        ),
+                      );
+                    },
+                    loading: () => const CircularProgressIndicator(
+                      color: AppColors.primaryGreen,
+                    ),
+                    error: (_, __) => const SizedBox.shrink(),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(currentIndex: 2),
+      bottomNavigationBar: const BottomNavBar(currentIndex: 1),
     );
   }
 
