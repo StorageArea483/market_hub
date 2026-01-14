@@ -7,8 +7,8 @@ import 'package:market_hub/styles/style.dart';
 import 'package:market_hub/widgets/internet_connection.dart';
 
 class ShowProducts extends ConsumerWidget {
-  final String category;
-  const ShowProducts({super.key, required this.category});
+  final double? productPrice;
+  const ShowProducts({super.key, this.productPrice});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,23 +20,20 @@ class ShowProducts extends ConsumerWidget {
       skipLoadingOnRefresh: false,
       skipLoadingOnReload: false,
       data: (products) {
-        if (category.isNotEmpty) {
-          filteredProducts = products
-              .where(
-                (product) =>
-                    product.category.toLowerCase() == category.toLowerCase(),
-              )
+        filteredProducts = selectedCategory == 'All'
+            ? products
+            : products
+                  .where(
+                    (product) =>
+                        product.category.toLowerCase() ==
+                        selectedCategory.toLowerCase(),
+                  )
+                  .toList();
+
+        if (productPrice != null) {
+          filteredProducts = filteredProducts
+              .where((product) => product.price <= productPrice!)
               .toList();
-        } else {
-          filteredProducts = selectedCategory == 'All'
-              ? products
-              : products
-                    .where(
-                      (product) =>
-                          product.category.toLowerCase() ==
-                          selectedCategory.toLowerCase(),
-                    )
-                    .toList();
         }
 
         if (filteredProducts.isEmpty) {

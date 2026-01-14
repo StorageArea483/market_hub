@@ -11,15 +11,17 @@ class GoogleAuthentication extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isLoading = ref.watch(isLoadingProvider);
+
     return ElevatedButton(
-      onPressed: () => _handleGoogleSignIn(context, ref),
+      onPressed: isLoading ? null : () => _handleGoogleSignIn(context, ref),
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.white,
         foregroundColor: AppColors.textPrimary,
         elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      child: ref.watch(isLoadingProvider.notifier).state
+      child: isLoading
           ? const SizedBox(
               height: 24,
               width: 24,

@@ -21,10 +21,6 @@ class BottomNavBar extends StatelessWidget {
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
         BottomNavigationBarItem(
-          icon: Icon(Icons.explore_outlined),
-          label: 'Discover',
-        ),
-        BottomNavigationBarItem(
           icon: Icon(Icons.shopping_cart_outlined),
           label: 'Cart',
         ),
@@ -47,7 +43,7 @@ class BottomNavBar extends StatelessWidget {
                   const InternetConnection(child: LandingPage()),
             ),
           );
-        } else if (index == 2) {
+        } else if (index == 1) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) =>

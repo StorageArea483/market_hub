@@ -229,4 +229,8 @@ class CartNotifier extends StateNotifier<CartData> {
       return false;
     }
   }
+
+  // Remove the nested provider
 }
+
+final selectedPriceProvider = StateProvider<double?>((ref) => null);

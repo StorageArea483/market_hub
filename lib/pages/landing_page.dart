@@ -57,6 +57,7 @@ class _LandingPageState extends State<LandingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final prices = [100, 200, 400, 600, 800, 2000, 4000];
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -205,6 +206,7 @@ class _LandingPageState extends State<LandingPage> {
                         ],
                       ),
                     ),
+
                     const SizedBox(height: 24),
 
                     // Banner Section (Placeholder)
@@ -238,6 +240,58 @@ class _LandingPageState extends State<LandingPage> {
                     ),
                     const SizedBox(height: 24),
 
+                    // Price Filters
+                    SizedBox(
+                      height: 50,
+                      child: Consumer(
+                        builder: (context, ref, _) {
+                          final selectedPrice = ref.watch(
+                            selectedPriceProvider,
+                          );
+                          return ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: prices.length,
+                            itemBuilder: (context, index) {
+                              final price = prices[index];
+                              final isSelected =
+                                  selectedPrice == price.toDouble();
+
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    ref
+                                        .read(selectedPriceProvider.notifier)
+                                        .state = price
+                                        .toDouble();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: isSelected
+                                        ? AppColors.primaryGreen
+                                        : Colors.white,
+                                    foregroundColor: isSelected
+                                        ? Colors.white
+                                        : Colors.black,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                      side: BorderSide(
+                                        color: isSelected
+                                            ? AppColors.primaryGreen
+                                            : Colors.grey.shade300,
+                                      ),
+                                    ),
+                                    elevation: 0,
+                                  ),
+                                  child: Text('Under \$$price'),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
                     // Featured Products Section
                     const Text(
                       'Featured Products',
@@ -249,7 +303,13 @@ class _LandingPageState extends State<LandingPage> {
                     ),
                     const SizedBox(height: 16),
                     // Product Grid (Placeholder)
-                    const ShowProducts(category: ''),
+                    Consumer(
+                      builder: (context, ref, _) {
+                        return ShowProducts(
+                          productPrice: ref.watch(selectedPriceProvider),
+                        );
+                      },
+                    ),
                     const SizedBox(height: 20),
                   ],
                 ),

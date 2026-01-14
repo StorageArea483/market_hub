@@ -221,7 +221,7 @@ class ProductDetailScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          ShowProducts(category: product.category),
+                          ShowProducts(productPrice: product.price),
                         ],
                       ),
                     ),
