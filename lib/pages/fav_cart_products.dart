@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:market_hub/pages/landing_page.dart';
-import 'package:market_hub/pages/product_detail_screen.dart';
+import 'package:market_hub/widgets/product_detail_screen.dart';
 import 'package:market_hub/providers/fav_provider.dart';
 import 'package:market_hub/styles/style.dart';
 import 'package:market_hub/widgets/bottom_nav_bar.dart';
@@ -26,6 +26,15 @@ class FavCartProducts extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+            onPressed: () => Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) =>
+                    const InternetConnection(child: LandingPage()),
+              ),
+            ),
+          ),
           title: const Text(
             'Saved Products',
             style: TextStyle(

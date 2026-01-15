@@ -93,7 +93,15 @@ class _UserProfileState extends State<UserProfile> {
         backgroundColor: AppColors.background,
         appBar: AppBar(
           backgroundColor: AppColors.background,
-          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+            onPressed: () => Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) =>
+                    const InternetConnection(child: LandingPage()),
+              ),
+            ),
+          ),
           title: const Text(
             'User Profile',
             style: TextStyle(
