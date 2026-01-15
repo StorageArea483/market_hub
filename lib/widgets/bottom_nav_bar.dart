@@ -3,6 +3,7 @@ import 'package:market_hub/pages/cart_details.dart';
 import 'package:market_hub/pages/fav_cart_products.dart';
 import 'package:market_hub/pages/landing_page.dart';
 import 'package:market_hub/styles/style.dart';
+import 'package:market_hub/pages/user_profile.dart';
 import 'package:market_hub/widgets/internet_connection.dart';
 
 class BottomNavBar extends StatelessWidget {
@@ -37,28 +38,22 @@ class BottomNavBar extends StatelessWidget {
       onTap: (index) {
         if (index == currentIndex) return;
 
+        Widget target;
         if (index == 0) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) =>
-                  const InternetConnection(child: LandingPage()),
-            ),
-          );
+          target = const LandingPage();
         } else if (index == 1) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) =>
-                  const InternetConnection(child: CartDetails()),
-            ),
-          );
+          target = const CartDetails();
         } else if (index == 2) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) =>
-                  const InternetConnection(child: FavCartProducts()),
-            ),
-          );
+          target = const FavCartProducts();
+        } else {
+          target = const UserProfile();
         }
+
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => InternetConnection(child: target),
+          ),
+        );
       },
     );
   }
