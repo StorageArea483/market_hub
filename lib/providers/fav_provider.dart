@@ -26,7 +26,7 @@ class FavNotifier extends StateNotifier<List<int>> {
 
       if (doc.exists) {
         final data = doc.data();
-        state = List<int>.from(data!['favourites']);
+        state = List<int>.from(data?['favourites'] ?? []);
       }
     } catch (e) {
       // Handle error cleanly
@@ -79,7 +79,7 @@ final loadFavCartProducts = FutureProvider<FavProductsData>((ref) async {
   }
 
   final data = doc.data();
-  final List<int> favIds = List<int>.from(data!['favourites']);
+  final List<int> favIds = List<int>.from(data?['favourites'] ?? []);
   return FavProductsData(
     products: postsAsyncValue
         .where((product) => favIds.contains(product.id))

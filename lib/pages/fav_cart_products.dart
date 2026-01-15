@@ -196,8 +196,8 @@ class FavCartProducts extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          'An error occurred while loading products',
+                        Text(
+                          'An error occurred while loading products: $error',
                           style: AppTextStyles.subtitle,
                         ),
                         const SizedBox(height: 8),

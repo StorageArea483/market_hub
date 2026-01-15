@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:market_hub/pages/google_signup.dart';
 import 'package:market_hub/pages/landing_page.dart';
+import 'package:market_hub/providers/cart_provider.dart';
 import 'package:market_hub/providers/cart_ui_provider.dart';
+import 'package:market_hub/providers/category_provider.dart';
+import 'package:market_hub/providers/fav_provider.dart';
+import 'package:market_hub/providers/product_provider.dart';
 import 'package:market_hub/styles/style.dart';
 import 'package:market_hub/widgets/bottom_nav_bar.dart';
 import 'package:market_hub/widgets/internet_connection.dart';
@@ -64,16 +68,39 @@ class _UserProfileState extends State<UserProfile> {
     }
   }
 
-  Future<void> _logout(WidgetRef ref) async {
+  Future<bool> _logout(WidgetRef ref) async {
     ref.read(isLoadingProvider.notifier).state = true;
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        await FirebaseFirestore.instance
+            .collection('cart_items')
+            .doc(user.uid)
+            .delete();
+      } catch (e) {
+        return false;
+      }
+    }
+    // Invalidate providers to clear local state
+    ref.invalidate(cartProvider);
+    ref.invalidate(loadCartIdsProvider);
+    ref.invalidate(categoryProvider);
+    ref.invalidate(favProvider);
+    ref.invalidate(loadFavCartProducts);
+    ref.invalidate(productCartCountProvider);
+    ref.invalidate(postProvider);
+
     await FirebaseAuth.instance.signOut();
+    ref.read(isLoadingProvider.notifier).state = false;
     if (mounted) {
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const GoogleSignup()),
+        MaterialPageRoute(
+          builder: (context) => const InternetConnection(child: GoogleSignup()),
+        ),
         (route) => false,
       );
     }
-    ref.read(isLoadingProvider.notifier).state = false;
+    return true;
   }
 
   @override
@@ -177,24 +204,25 @@ class _UserProfileState extends State<UserProfile> {
                                     borderRadius: BorderRadius.circular(16),
                                   ),
                                 ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(Icons.logout, size: 20),
-                                    const SizedBox(width: 10),
-                                    isLoading
-                                        ? const CircularProgressIndicator(
-                                            color: Colors.white,
-                                          )
-                                        : const Text(
+                                child: isLoading
+                                    ? const CircularProgressIndicator(
+                                        color: Colors.white,
+                                      )
+                                    : const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.logout, size: 20),
+                                          SizedBox(width: 10),
+                                          Text(
                                             'Logout',
                                             style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                  ],
-                                ),
+                                        ],
+                                      ),
                               );
                             },
                           ),

@@ -2,12 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:market_hub/pages/cart_details.dart';
 import 'package:market_hub/providers/cart_provider.dart';
 import 'package:market_hub/providers/category_provider.dart';
 import 'package:market_hub/providers/product_provider.dart';
 import 'package:market_hub/styles/style.dart';
 import 'package:market_hub/models/categories.dart';
 import 'package:market_hub/widgets/bottom_nav_bar.dart';
+import 'package:market_hub/widgets/internet_connection.dart';
 import 'package:market_hub/widgets/sale_items.dart';
 import 'package:market_hub/widgets/show_products.dart';
 
@@ -83,10 +85,21 @@ class _LandingPageState extends State<LandingPage> {
                           return Stack(
                             clipBehavior: Clip.none,
                             children: [
-                              const Icon(
-                                Icons.shopping_cart,
-                                color: Colors.black,
-                                size: 28,
+                              GestureDetector(
+                                onTap: () =>
+                                    Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const InternetConnection(
+                                              child: CartDetails(),
+                                            ),
+                                      ),
+                                    ),
+                                child: const Icon(
+                                  Icons.shopping_cart,
+                                  color: Colors.black,
+                                  size: 28,
+                                ),
                               ),
                               // Badge
                               Positioned(
