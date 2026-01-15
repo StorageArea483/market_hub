@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
-import 'package:market_hub/services/secret_key.dart';
 
 final stripePaymentProvider = Provider<StripePaymentService>(
   (ref) => StripePaymentService(),
@@ -53,7 +53,7 @@ class StripePaymentService {
       final response = await http.post(
         Uri.parse('https://api.stripe.com/v1/payment_intents'),
         headers: {
-          'Authorization': 'Bearer $secretKey',
+          'Authorization': 'Bearer ${dotenv.env['STRIPE_SECRET_KEY']}',
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: body,
