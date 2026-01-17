@@ -1,6 +1,6 @@
 # market_hub
 
-In Production Phase currently project not completed.
+Project Completed and Up to Date.
 
 ## Getting Started
 
